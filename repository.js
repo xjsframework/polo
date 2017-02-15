@@ -53,12 +53,16 @@ var ME = function() {
 	var nets = require('os').networkInterfaces();
 
 	for (var i in nets) {
-		var candidate = nets[i].filter(function(item) {
-			return item.family === 'IPv4' && !item.internal;
-		})[0];
 
-		if (candidate) {
-			return candidate.address;
+		// do not broadcast any virtual interfaces
+		if (!i.match(/docker|vmware|virtualbox|wireshark/i)) {
+			var candidate = nets[i].filter(function(item) {
+				return item.family === 'IPv4' && !item.internal;
+			})[0];
+
+			if (candidate) {
+				return candidate.address;
+			}
 		}
 	}
 
